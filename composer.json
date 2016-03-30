@@ -1,0 +1,23 @@
+{
+    "name": "vbelle/mycommand",
+    "authors": [
+        {
+            "name": "Bofiss",
+            "email": "bofiss@gmail.com"
+        }
+    ],
+    "require": {
+         "symfony/console": "~2.0",
+        "guzzlehttp/guzzle": "^6.2",
+        "alchemy/zippy": "^0.3.5",
+        "raulfraile/distill": "^0.9.10"
+
+    },
+
+    "autoload":{
+      "psr-4":{
+        "Acme\\":"src"
+      }
+    }
+
+}
