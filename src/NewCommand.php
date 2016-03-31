@@ -21,7 +21,7 @@ class NewCommand extends Command {
      $this->setName("new")
          ->setDescription('Create a new Drupal application.')
          ->addArgument('name', InputArgument::REQUIRED )
-         ->addOption('versions', null, InputOption::VALUE_OPTIONAL, "Version par defaut", "7");
+         ->addOption('v', null, InputOption::VALUE_OPTIONAL, "Version par defaut", "7");
   }
 
    public function execute(InputInterface $input, OutputInterface $output){
@@ -32,8 +32,8 @@ class NewCommand extends Command {
      $this->assertApplicationDoesNotExist($directory, $output);
 
      // download latest version of drupal 7.
-      $this->download($zipFile=$this->makeFileName(), $input->getOption('version'))
-          ->extract($zipFile, $directory, $input->getOption('version'))
+      $this->download($zipFile=$this->makeFileName(), $input->getOption('v'))
+          ->extract($zipFile, $directory, $input->getOption('v'))
           ->cleanUp($zipFile);
       $message  = "Application ready !!";
       $output->writeln("<comment>{$message}</comment>");
@@ -55,9 +55,12 @@ class NewCommand extends Command {
 
 
    private function download($zipFile, $options){
-     $response = $this->client->get('http://drupalfr.org/sites/default/files/drupal-7.latest.tar.gz')->getBody();
+     //$this->client->setDefaultOption('verify', false);
+
      if($options == "8"){
-       $response = $this->client->get('http://ftp.drupal.org/files/projects/drupal-8.0.5.tar.gz')->getBody();
+       $response = $this->client->get('https://ftp.drupal.org/files/projects/drupal-8.0.5.tar.gz')->getBody();
+     }else{
+       $response = $this->client->get('https://ftp.drupal.org/files/projects/drupal-7.43.tar.gz')->getBody();
      }
      file_put_contents($zipFile, $response);
      return $this;
@@ -67,7 +70,7 @@ class NewCommand extends Command {
    private function extract($zipFile, $directory, $options){
      $distill = new Distill();
      $distill->extract($zipFile, '/tmp');
-     if($option = "8"){
+     if($options == 8){
        $this->recurse_copy('/tmp/drupal-8.0.5', $directory);
      }else{
        $this->recurse_copy('/tmp/drupal-7.43', $directory);
